@@ -14,6 +14,11 @@ class BrainfuckInterpreterTest extends TestCase {
         include_once __DIR__ . "/../src/SeaLife/Brainfuck/Parser.php";
     }
 
+    public function testGetMaxSizeOfMemory8Bit () {
+        $memory = new Memory();
+        Assert::assertEquals(255, $memory->getMaxSize());
+    }
+
     public function testMemoryBasicAdd () {
         $memory = new Memory();
         $memory->modify(+1);
@@ -27,12 +32,12 @@ class BrainfuckInterpreterTest extends TestCase {
         $memory = new Memory();
         $memory->modify(-1);
 
-        Assert::assertEquals(-1, $memory->read());
+        Assert::assertEquals(255, $memory->read());
     }
 
     public function testMovePointerAfterAdd () {
         $memory = new Memory();
-        $memory->modify(+1);
+        $memory->modify(256);
         $memory->move(+1);
 
         Assert::assertEquals(0, $memory->read());
@@ -52,7 +57,7 @@ class BrainfuckInterpreterTest extends TestCase {
         $memory->makeChar();
         $memory->makeChar();
 
-        Assert::assertEquals("{MemoryDump '!!', 33}", $memory->dump());
+        Assert::assertEquals("{MemoryDump str='!!', pointer='0', content='33'}", $memory->dump());
     }
 
     public function testRawMemoryOutput () {

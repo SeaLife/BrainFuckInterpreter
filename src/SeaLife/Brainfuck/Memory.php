@@ -8,11 +8,14 @@ namespace SeaLife\Brainfuck;
  * An instance of this object will be returned by the Parser if parsing was successful.
  */
 class Memory {
-    protected $memory = array();
-
+    protected $memory         = array();
     protected $memoryPosition = 0;
+    protected $string         = "";
+    protected $bitSize        = 8;
 
-    protected $string = "";
+    public function __construct ($bitSize = 8) {
+        $this->bitSize = $bitSize;
+    }
 
     public function read () {
         return isset($this->memory[$this->memoryPosition]) ? $this->memory[$this->memoryPosition] : 0;
@@ -27,10 +30,35 @@ class Memory {
     }
 
     public function modify ($amount) {
+        if ($amount > 0) {
+            for ($i = 0; $i < $amount; $i++)
+                $this->increase();
+        } else {
+            for ($i = 0; $i > $amount; $i--)
+                $this->decrease();
+        }
+    }
+
+    public function increase () {
         if (!isset($this->memory[$this->memoryPosition]))
             $this->memory[$this->memoryPosition] = 0;
 
-        $this->memory[$this->memoryPosition] += $amount;
+        if ($this->memory[$this->memoryPosition] == $this->getMaxSize()) {
+            $this->memory[$this->memoryPosition] = 0;
+        } else {
+            $this->memory[$this->memoryPosition] += 1;
+        }
+    }
+
+    public function decrease () {
+        if (!isset($this->memory[$this->memoryPosition]))
+            $this->memory[$this->memoryPosition] = 0;
+
+        if ($this->memory[$this->memoryPosition] == 0) {
+            $this->memory[$this->memoryPosition] = $this->getMaxSize();
+        } else {
+            $this->memory[$this->memoryPosition] -= 1;
+        }
     }
 
     public function set ($position, $value) {
@@ -49,7 +77,7 @@ class Memory {
     public function dump () {
         $cc = implode(", ", $this->memory);
 
-        return "{MemoryDump '{$this->getString()}', $cc}";
+        return "{MemoryDump str='{$this->getString()}', pointer='{$this->memoryPosition}', content='$cc'}";
     }
 
     /**
@@ -64,5 +92,9 @@ class Memory {
      */
     public function getMemoryPosition () {
         return $this->memoryPosition;
+    }
+
+    public function getMaxSize () {
+        return pow(2, $this->bitSize) - 1;
     }
 }

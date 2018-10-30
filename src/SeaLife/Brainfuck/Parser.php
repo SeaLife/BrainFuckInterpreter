@@ -95,11 +95,11 @@ class Parser {
                     break;
 
                 case '+':
-                    $this->getMemory()->modify(+1);
+                    $this->getMemory()->increase();
                     break;
 
                 case '-':
-                    $this->getMemory()->modify(-1);
+                    $this->getMemory()->decrease();
                     break;
 
                 case '>':
@@ -125,7 +125,7 @@ class Parser {
             }
 
             if ($iterations > $this->maxIterations and $this->maxIterations != -1) {
-                throw new ParseException("Iteration limit of {$this->maxIterations} reached! " . $this->getMemory()->dump());
+                throw new ParseException("Iteration limit of {$this->maxIterations} reached! (in char:$i, $inLoop) " . $this->getMemory()->dump());
             }
 
             $iterations++;
