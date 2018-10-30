@@ -6,8 +6,9 @@ namespace SeaLife\Brainfuck;
  * Brainfuck Parser
  */
 class Parser {
-    private $memory;
-    private $maxIterations = -1;
+    private $memory             = NULL;
+    private $maxIterations      = -1;
+    private $lastIterationCount = 0;
 
     public function __construct ($memory = NULL, $maxIterations = -1) {
         $this->memory        = $memory != NULL ? $memory : new Memory();
@@ -68,7 +69,7 @@ class Parser {
      *
      * @param string[] $input to be read if ',' is issued, null if it should really ask for input.
      *
-     * @return Memory on success
+     * @return int
      * @throws ParseException will be thrown on a parse error.
      */
     protected function parse ($code, $input = NULL) {
@@ -133,7 +134,7 @@ class Parser {
         if ($inLoop)
             throw new ParseException("Loop not ended? wtf!");
 
-        return $this->memory;
+        return $iterations;
     }
 
     /**
@@ -152,7 +153,9 @@ class Parser {
      * @throws ParseException
      */
     public function run ($code, $readArgs = NULL) {
-        return $this->parse(str_replace("\n", "", $code), $readArgs);
+        $this->lastIterationCount = $this->parse(str_replace("\n", "", $code), $readArgs);
+
+        return $this->memory;
     }
 
     /**
@@ -167,9 +170,15 @@ class Parser {
         if (file_exists($file)) {
             $content = file_get_contents($file);
 
-            return $this->parse(str_replace("\n", "", $content), $readArgs);
+            $this->lastIterationCount = $this->parse(str_replace("\n", "", $content), $readArgs);
+
+            return $this->memory;
         }
 
         return NULL;
+    }
+
+    public function getLastIterationCount () {
+        return $this->lastIterationCount;
     }
 }

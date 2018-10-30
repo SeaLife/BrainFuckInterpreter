@@ -137,13 +137,22 @@ class BrainfuckInterpreterTest extends TestCase {
         Assert::assertEquals('"', $parser->getMemory()->getString());
     }
 
+    /**
+     * @throws \SeaLife\Brainfuck\ParseException
+     */
+    public function testGetLastIterationCount () {
+        $parser = new Parser();
+        $parser->run(',+.', array('!'));
+
+        Assert::assertEquals(3, $parser->getLastIterationCount());
+    }
 
     /**
      * @throws \SeaLife\Brainfuck\ParseException
      * @expectedException \SeaLife\Brainfuck\ParseException
      */
-    public function testExceedIterationLimit() {
-        $parser = new Parser(null, 1000);
+    public function testExceedIterationLimit () {
+        $parser = new Parser(NULL, 1000);
         $parser->run('++++[>+++++<-]>[<+++++>-]+<+[>[>+>+<<-]++>>[<<+>>-]>>>[-]++>[-]+>>>+[[-]++++++>>>]<<<[[<++++++++<++>>-]+<.<[>----<-]<]<<[>>>>>[>>>[-]+++++++++<[>-<-]+++++++++>[-[<->-]+[<<<]]<[>+<-]>]<<-]<<-]');
     }
 }
