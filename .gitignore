@@ -1,0 +1,6 @@
+## some directories :D
+vendor/
+coverage/
+.idea/
+
+composer.lock
